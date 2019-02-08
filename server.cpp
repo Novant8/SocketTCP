@@ -15,17 +15,17 @@ int main(int argc, char** argv) {
     printf("OK!\n");
     
     printf("Accepting connection...\n");
-    Connessione conn = myself.accetta();
-    Address client = conn.getClient();
-    printf("Connection inbound from [%s]\n", client.toString());
+    ServerConn conn = myself.accetta();
+    Address* client = conn.getClient();
+    printf("Connection inbound from [%s]\n", client->toString());
     
     printf("Waiting for messages...\n");
     char* answer = conn.ricevi();
     if(msg == NULL)
         error("recv()", -5);
-    printf("Message recieved from [%s]: %s", client.toString(), answer);
+    printf("Message recieved from [%s]: %s\n", client->toString(), answer);
     
-    printf("Sending response...");
+    printf("Sending response...\n");
     if(conn.invia(msg)) {
         error("send()", -6);
     }
