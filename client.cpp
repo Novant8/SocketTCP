@@ -11,7 +11,11 @@ int main(int argc, char** argv) {
     char* ip = argv[1];
     int port = atoi(argv[2]);
     char* msg = argv[3];
+<<<<<<< HEAD
+
+=======
     
+>>>>>>> aad6f342e07178444779ce215a08129506509632
     printf("Creating socket...\n");
     ClientTCP myself;
     printf("OK!\n");

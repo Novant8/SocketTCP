@@ -1,0 +1,94 @@
+/*
+TODO:
+
+#Classe SocketTCP:
+#	proprietà: protected int sockid
+#	metodi: SocketTCP()	//socket() -> togliere il metodo da ClientTCP e SocketTCP
+#		~SocketTCP()	//close() -> idem
+#
+# Le classi ClientTCP e ServerTCP ereditano da SocketTCP
+
+#ClientTCP crea anche una connessione, aggiunta come proprietà. In questo modo non si copia-incollano i metodi invia() e #ricevi(). In questo caso, come parametro al costruttore Connection() si passa il sockfd.
+
+#Problema: il distruttore ~Connection() usa la funzione shutdown() che funziona solo con il conn_id.
+#Si creano quindi due sottoclassi ServerConn e ClientConn che ereditano da Connection. L'unico metodo che contengono è il #distruttore: nella prima classe viene chiamato shutdown(), nella seconda viene fatto niente.
+
+#La proprietà conn di ClientTCP restituisce una ClientConn, il metodo accetta() di ServerTCP restituisce una ServerConn.
+
+#Aggiungere una collezione di connessioni a ServerTCP. In quel modo si possono chiudere tutte le connessioni poi il socket.
+#Le collezioni in C++ si trovano nella Standard Template Library (STL).
+#La proprietà conns di ServerTCP è di tipo list<ServerConn*> (devono essere maniglie, non oggetti).
+#Per aggiungere usare sempre push_front() perchè è più fast.
+#Nel distruttore del socket bisogna chiudere tutte le connessioni.
+
+Aggiungere funzione inviaBroadcast() nella classe ServerTCP. La funziona cicla tutta la lista delle connessioni e chiama la funziona invia() su tutte le connessioni
+
+Aggiungere metodo chiudiConnessione() nel servertcp che cancella un elemento dalla lista connessioni.
+*/
+
+//IMPLEMENTAZIONE LISTE (SENZA STL)
+typedef struct Nodo {
+	int key;
+	struct Nodo next;
+}Nodo;
+
+void implementazione() {
+	Node* first;
+	first = NULL;
+	Node* nuovo = (Node*)malloc(sizeof(Node));
+	nuovo->key = 42;
+	nuovo->next = NULL;
+	first = nuovo;
+	//Aggiunta elemento
+	first = first.add(53, first);
+	//Cancellazione elemento appena aggiunto
+	first = remove(first);
+	//Visita elementi della lista
+	visita(first);
+	//Stampa degli elementi al rovescio
+	visitaRovescio(first);
+}
+
+/*Aggiunta elemento al nodo*/
+Node* add(int key, Node* first) {
+	Node* nuovo = (Node*)malloc(sizeof(Node));
+	nuovo->key = key;
+	nuovo->next = first;
+	return nuovo;
+}
+
+/*Cancellazione del primo elemento della lista*/
+Node* remove(Node* first) {
+	Node* ret;
+	ret = first->next;
+	free(first);
+	return ret;
+}
+
+/*Visita/Scorrimento degli elementi della lista*/
+void visita(Node* curr) {
+	while(curr) {
+		printf("%d - ", curr->key);
+		curr = curr->next;
+	}
+}
+
+/*Stampa degli elementi della lista al rovescio*/
+void visitaRovescio(Node* curr) {
+	if(curr) {
+		visitaRovescio(curr->next);
+		printf("%d -" curr->key);
+	}
+}
+
+//USO LIST STL
+#include <list>
+
+void stlListe() {
+	list<ServerConn*> *conns;
+	//... aggiungo connessioni ...
+	ServerConn* connessioneDaRimuovere;
+	//...
+	conns->remove(connessioneDaRimuovere);
+	
+}
