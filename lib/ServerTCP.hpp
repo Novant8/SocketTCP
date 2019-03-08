@@ -3,32 +3,24 @@
 
 #include "SocketTCP.hpp"
 #include "Connection.hpp"
-<<<<<<< HEAD
 #include <list>
-=======
->>>>>>> aad6f342e07178444779ce215a08129506509632
+
 
 #define MAX_CONN 50
 #define IP_LO "127.0.0.1"
 
-<<<<<<< HEAD
 class ServerTCP : SocketTCP {
 private:
     std::list<ServerConn*> conns;
+    void chiudiConnessioni();
 public:
     ServerTCP(int);
     ServerTCP(int, int);
     ServerConn* accetta();
     void inviaBroadcast(char*);
-    void cancellaConnessione(ServerConn*);
+    void inviaRawBroadcast(void*, int);
+    void chiudiConnessione(ServerConn*);
     ~ServerTCP();
-=======
-class ServerTCP : SocketTCP {    
-public:
-    ServerTCP(int);
-    ServerTCP(int, int);
-    ServerConn accetta();
->>>>>>> aad6f342e07178444779ce215a08129506509632
 };
 
 ServerTCP::ServerTCP(int port, int max_connections) : SocketTCP() {  
@@ -50,11 +42,8 @@ ServerTCP::ServerTCP(int port, int max_connections) : SocketTCP() {
 
 ServerTCP::ServerTCP(int port) : ServerTCP(port, MAX_CONN) {}
 
-<<<<<<< HEAD
 ServerConn* ServerTCP::accetta() {
-=======
-ServerConn ServerTCP::accetta() {
->>>>>>> aad6f342e07178444779ce215a08129506509632
+
     struct sockaddr_in src;
     int len_client_addr = sizeof(struct sockaddr_in);
     int conn_id = accept(sockfd,
@@ -63,40 +52,43 @@ ServerConn ServerTCP::accetta() {
     if(conn_id<0)
         error("accept()", -4);
     
-<<<<<<< HEAD
+
     ServerConn* conn = (ServerConn*)malloc(sizeof(ServerConn));
-    
     conn = new ServerConn(conn_id, new Address(src));
-        
     conns.push_front(conn);
-=======
-    ServerConn conn(conn_id, new Address(src));
->>>>>>> aad6f342e07178444779ce215a08129506509632
     
     return conn;
 }
 
-<<<<<<< HEAD
 void ServerTCP::inviaBroadcast(char* msg) {
     std::list<ServerConn*>::iterator it;
     for(it = conns.begin(); it!=conns.end(); it++) {
         (*it)->invia(msg);
+	delete *it;
     }
 }
 
-void ServerTCP::cancellaConnessione(ServerConn* conn) {
-    conns.remove(conn);
+void ServerTCP::inviaRawBroadcast(void* msg, int length) {
+    //Aggiungere prima inviaRaw nella classe Connessione
 }
 
-ServerTCP::~ServerTCP() {
+void ServerTCP::chiudiConnessione(ServerConn* conn) {
+    conns.remove(conn);
+    delete conn;
+}
+
+void ServerTCP::chiudiConnessioni() {
+    //TOGLIERE FOR, METTERE WHILE
     inviaBroadcast("Sto chiudendo la connessione...");
     std::list<ServerConn*>::iterator it;
     for(it = conns.begin(); it!=conns.end(); it++) {
-        delete *it;
+        chiudiConnessione(*it);
+	delete *it;
     }
-    conns.clear();
 }
 
-=======
->>>>>>> aad6f342e07178444779ce215a08129506509632
+ServerTCP::~ServerTCP() {
+    chiudiConnessioni();
+}
+
 #endif //__SERVERTCP_HPP
